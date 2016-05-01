@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="UTF-8">
+    <title>ClintMilner.com - 404</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="description" content="Clint Milner - Front End Web Development and Design - JavaScript, jQuery, Java, Node.js, Underscore.js">
+    <meta name="author" content="Clint Milner">
+    <meta name="copyright" content="2014">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="css/style404.css" type="text/css" />
+    <style type="text/css">
+        html, body { background-color: #111; }
+    </style>
+</head>
+<body>
+<script src='http://cdn.jsdelivr.net/p5.js/0.3.8/p5.min.js'></script>
+<script>
+    var hintImage, skyImage, stars = [];
+
+    function setup() {
+        createCanvas(window.innerWidth, window.innerHeight);
+        noCursor();
+        noStroke();
+
+        hintImage = loadImage(
+                "img/404.jpg"
+        );
+        skyImage = loadImage(
+                "img/golden-time-lapse.jpg"
+        );
+    }
+
+    function draw() {
+        //skyImage.resize( window.innerWidth, window.innerHeight);
+        image(skyImage, 0, 0);
+
+        var position = createVector(mouseX, mouseY);
+
+        fill(200,200,100);
+        ellipse(position.x, position.y, 2, 2);
+
+        if (!mouseIsPressed) {
+            var target = findPixel();
+            var star = new Star(position, target);
+
+            stars.push(star);
+            if (stars.length > 5000) stars.shift();
+        }
+
+        for (var i = 0; i < stars.length; i++) {
+            stars[i].update();
+            stars[i].draw();
+        }
+    }
+
+    function findPixel() {
+        var x, y;
+        for (var i = 0; i < 10000; i++)
+        {
+            x = floor(random(hintImage.width));
+            y = floor(random(hintImage.height));
+
+            if (red(hintImage.get(x, y)) < 255) break;
+        }
+        return createVector(x, y);
+    }
+
+    function Star(position, target) {
+        this.position = position;
+        this.target = target;
+        this.diameter = random(1, 5);
+    }
+
+    Star.prototype.update = function() {
+        this.position = p5.Vector.lerp(
+                this.position,
+                this.target,
+                .2
+        );
+    };
+
+    Star.prototype.draw = function() {
+        var alpha = noise(
+                this.target.x,
+                this.target.y,
+                millis() / 100.0
+        );
+
+        fill(255, alpha * 255);
+
+        ellipse(
+                this.position.x, this.position.y,
+                this.diameter, this.diameter
+        );
+    };
+
+    setTimeout(function(){
+        location.href = 'http://clintmilner.com';
+    }, 60000);
+</script>
+</body>
+</html>
